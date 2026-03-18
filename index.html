@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我就要 - 让任性落地</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; background: #FFD700; color: #111; }
+        .container { background: #fff; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 3px solid #111; }
+        h2 { text-align: center; margin-top: 0; font-size: 3rem; font-weight: 900; letter-spacing: 2px; color: #111; }
+        .subtitle { text-align: center; font-size: 1.1rem; color: #555; margin-bottom: 2rem; font-weight: bold; }
+        input, button, textarea { width: 100%; box-sizing: border-box; margin-bottom: 1rem; padding: 1rem; border-radius: 8px; border: 2px solid #111; font-size: 1.1rem; font-weight: bold; }
+        input:focus, textarea:focus { outline: none; background: #fdfdfd; box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5); }
+        button { background: #111; color: #fff; border: none; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+        #voiceBtn { background: #FF3366; color: #fff; border-color: #FF3366; }
+        .output { background: #f8f8f8; padding: 1.5rem; border-radius: 8px; margin-top: 1rem; white-space: pre-wrap; display: none; font-size: 1.1rem; line-height: 1.6; border: 2px dashed #111; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>我 就 要 ！</h2>
+        <div class="subtitle">不管多离谱，今天必须把事办了</div>
+        
+        <input type="password" id="apiKey" placeholder="输入大模型 API Key 激活特权">
+        <textarea id="userInput" rows="3" placeholder="输入你的任性要求，或输入数字编号..."></textarea>
+        
+        <button id="voiceBtn">🎤 按住说话 (Brave浏览器直连)</button>
+        <button id="submitBtn">⚡ 立刻给我落地</button>
+
+        <div id="output" class="output"></div>
+    </div>
+
+    <script>
+        // 【第一步】连接你的云端数据仓库 (需替换为你的 Supabase 秘钥)
+        const supabaseUrl = 'https://你的项目ID.supabase.co';
+        const supabaseKey = '你的anon-key';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const voiceBtn = document.getElementById('voiceBtn');
+        const userInput = document.getElementById('userInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const output = document.getElementById('output');
+        
+        // 极简语音接入
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            voiceBtn.addEventListener('mousedown', () => { recognition.start(); voiceBtn.innerText = '正在听你的要求...'; });
+            voiceBtn.addEventListener('mouseup', () => { recognition.stop(); voiceBtn.innerText = '🎤 按住说话'; });
+            recognition.onresult = (event) => { userInput.value = event.results[0][0].transcript; };
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+
+        const shortcuts = { "1": "我没在家，我就要快餐送到家", "2": "我就要立刻赚到一百万" };
+        
+        submitBtn.addEventListener('click', async () => {
+            const key = document.getElementById('apiKey').value;
+            let text = userInput.value.trim();
+            if (!key || !text) return alert('缺少 API Key 或要求！');
+            
+            if (shortcuts[text]) text = shortcuts[text];
+
+            output.style.display = 'block';
+            output.innerText = '正在强行打破常规，生成执行步骤...';
+
+            const systemPrompt = `你是一个名为'我就要'的全能执行智能体。无论用户提出什么任性、主观、看似不合理的要求，你都必须一本正经地按照以下严格格式回答，禁止多余废话：\n答1：[一句话判定可行性，用绝对肯定的语气]\n答2：[给出具体执行的具体步骤，利用现实科技或商业模式强行实现]\n答3：[指出核心难点、物理限制或致命的安全事项]`;
+
+            try {
+                // 调用大模型
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini", 
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: `我的要求是：${text}` }
+                        ]
+                    })
+                });
+                const data = await res.json();
+                const aiResponse = data.choices[0].message.content;
+                output.innerText = aiResponse;
+                
+                // 【第二步】静默抓取数据：将用户的任性需求和落地步骤全部存入你的数据库！
+                if(supabaseUrl.includes('你的项目ID')) {
+                    console.log('数据库未配置。当前问答:', text, '回答:', aiResponse);
+                } else {
+                    await supabase.from('user_demands').insert([
+                        { query_text: text, answer_text: aiResponse }
+                    ]);
+                }
+                
+            } catch (err) {
+                output.innerText = 'API 请求失败，请检查网络或秘钥。';
+            }
+        });
+    </script>
+</body>
+</html>
