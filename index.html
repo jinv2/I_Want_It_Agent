@@ -331,6 +331,18 @@
             pointer-events: none;
         }
         .footer-container span { color: #00ff41; opacity: 0.3; }
+
+        .protocol-tip {
+            margin-top: 15px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.15);
+            text-align: center; /* 确保文字在自身容器内居中 */
+            letter-spacing: 1px;
+            pointer-events: none;
+            display: block;      /* 强制转换为块级元素 */
+            width: 100%;         /* 撑满父容器宽度，确保 text-align 生效 */
+            line-height: 1.5;    /* 增加行高，防止在窄屏下堆叠难看 */
+        }
     </style>
 </head>
 <body>
@@ -385,10 +397,8 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 视觉
             </button>
-            <button class="btn btn-primary" id="executeBtn">
-                <span>立刻给我落地</span>
-            </button>
         </div>
+        <div class="protocol-tip">点击落地即视为同意《神思庭 · 灵愿循环共振协议》</div>
         <div id="captureStatus">✅ 已捕获画面，准备提交</div>
 
         <div id="outputContainer" class="output-box">
@@ -473,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
     const voiceBtn = document.getElementById('voiceBtn');
     const visionBtn = document.getElementById('visionBtn');
-    const executeBtn = document.getElementById('executeBtn');
+    const submitBtn = document.getElementById('submit-btn');
     const outputContainer = document.getElementById('outputContainer');
     const outputContent = document.getElementById('outputContent');
     const previewArea = document.getElementById('previewArea');
@@ -616,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- EXECUTION LOGIC ---
-    executeBtn.onclick = async () => {
+    submitBtn.onclick = async () => {
         let text = userInput.value.trim();
         const apiKey = apiKeyInput.value.trim();
 
@@ -629,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // UI Reset
         outputContainer.style.display = 'block';
         outputContent.innerHTML = '<span class="spinner"></span> 正在为你强行突破现实维度...';
-        executeBtn.disabled = true;
+        submitBtn.disabled = true;
 
         // 1. Mock Mode (No Key)
         if (!apiKey) {
@@ -637,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const mockResponse = `【本地测试模式激活】\n问：${text}\n答1：绝对可以做到，你的任性就是我的指令！\n答2：已拦截真实网络请求。生产级测试步骤：1. 验证 PWA 离线能力。2. 验证多模态数据结构。3. 验证静默收割机开关。\n答3：难点：当前为免 API 模拟状态，上线前请配置 OpenAI/Gemini Key。`;
                 outputContent.innerText = mockResponse;
-                executeBtn.disabled = false;
+                submitBtn.disabled = false;
                 saveRequirementData(text, mockResponse);
             }, 1500);
             return;
@@ -682,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             outputContent.innerText = '执行失败: ' + error.message;
         } finally {
-            executeBtn.disabled = false;
+            submitBtn.disabled = false;
         }
     };
 
