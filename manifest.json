@@ -1,0 +1,22 @@
+{
+  "name": "我就要 (I Want It)",
+  "short_name": "I_Want_It",
+  "description": "专治人类一切任性与不现实的极简智能体",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#111111",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/ios-filled/192/ffffff/target.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://img.icons8.com/ios-filled/512/ffffff/target.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
