@@ -333,16 +333,33 @@
         .footer-container span { color: #00ff41; opacity: 0.3; }
 
         .protocol-tip {
+            width: 100%;
+            text-align: center;
             margin-top: 15px;
             font-size: 10px;
             color: rgba(255, 255, 255, 0.15);
-            text-align: center; /* 确保文字在自身容器内居中 */
+            display: block;
             letter-spacing: 1px;
             pointer-events: none;
-            display: block;      /* 强制转换为块级元素 */
-            width: 100%;         /* 撑满父容器宽度，确保 text-align 生效 */
-            line-height: 1.5;    /* 增加行高，防止在窄屏下堆叠难看 */
         }
+
+        .main-submit-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            display: block !important; /* 强制显示 */
+            transition: all 0.2s;
+        }
+        .main-submit-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
+        .main-submit-btn:active { transform: translateY(0); }
+        .main-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -398,6 +415,7 @@
                 视觉
             </button>
         </div>
+        <button id="submit-btn" class="main-submit-btn">立刻给我落地</button>
         <div class="protocol-tip">点击落地即视为同意《神思庭 · 灵愿循环共振协议》</div>
         <div id="captureStatus">✅ 已捕获画面，准备提交</div>
 
