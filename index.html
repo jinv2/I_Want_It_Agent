@@ -304,9 +304,40 @@
             background: #ff4d42;
             box-shadow: 0 0 20px rgba(255, 59, 48, 0.3);
         }
+
+        /* Branding: Logo & Footer */
+        .site-logo {
+            position: fixed;
+            top: clamp(10px, 2vh, 25px);
+            left: clamp(10px, 2vw, 25px);
+            z-index: 999;
+        }
+        .site-logo img {
+            width: clamp(32px, 6vw, 48px);
+            height: auto;
+            mix-blend-mode: screen;
+            filter: brightness(1.5);
+        }
+        .footer-container {
+            position: fixed;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 1px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .footer-container span { color: #00ff41; opacity: 0.3; }
     </style>
 </head>
 <body>
+
+<div class="site-logo">
+    <a href="https://shensist.top/"><img src="logo_ts.png" alt="Shensist Logo"></a>
+</div>
 
 <!-- Paywall Overlay -->
 <div id="paywall">
@@ -367,7 +398,9 @@
     </div>
 </div>
 
-<div style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #666; letter-spacing: 1px; padding-bottom: 2rem;">© 2026 神思庭 (Shensi-ST) · 灵愿循环数字宇宙 严格版权所有</div>
+<div class="footer-container">
+    © 2026 神思庭 (Shensi-ST) <span>·</span> 灵愿循环数字宇宙 严格版权所有
+</div>
 
 <canvas id="cameraCanvas" style="display:none;"></canvas>
 
