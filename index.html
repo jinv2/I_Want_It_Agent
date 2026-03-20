@@ -361,27 +361,28 @@
         .main-submit-btn:active { transform: translateY(0); }
         .main-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Model Selector Styling */
-        #model-selector {
+        /* Shensist Select Styling */
+        .shensist-select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
-            font-family: 'PingFang SC', monospace;
-            appearance: none; /* 去掉原生箭头 */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-family: 'PingFang SC', 'Outfit', monospace;
+            appearance: none;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
         }
-        #model-selector:focus {
+        .shensist-select:focus {
             outline: none;
             border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(255, 59, 48, 0.2);
         }
-        #model-selector option {
+        .shensist-select option {
             background: #1a1a1c;
             color: #fff;
         }
@@ -412,22 +413,22 @@
         <div class="input-group">
             <input type="password" id="apiKey" placeholder="请输入 API Key (全协议自适应接入)...">
         </div>
-        <select id="model-selector">
-            <option value="o1-pro">o1-pro (推理增强)</option>
-            <option value="gpt-4o" selected>GPT-4o (全能通用)</option>
-            <option value="gpt-4o-mini">GPT-4o-mini (极速响应)</option>
-            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (逻辑专家)</option>
-            <option value="claude-3-5-haiku">Claude 3.5 Haiku (轻量平衡)</option>
-            <option value="gemini-1-5-pro">Gemini 1.5 Pro (超长上下文)</option>
-            <option value="gemini-1-5-flash">Gemini 1.5 Flash (极速流)</option>
-            <option value="deepseek-v3">DeepSeek-V3 (国产之光)</option>
-            <option value="llama-3.1-405b">Llama-3.1-405B (开源基座)</option>
-            <option value="qwen-2.5-72b">Qwen-2.5-72B (全能旗舰)</option>
+        <select id="model-selector" class="shensist-select">
+            <option value="o3-mini">OpenAI o3-mini-2026 (逻辑之王)</option>
+            <option value="claude-4">Claude 4.0 Sonnet (代码之魂)</option>
+            <option value="gemini-3">Gemini 3.0 Flash (多模态收割)</option>
+            <option value="deepseek-v4">DeepSeek-V4-Pro (国产之光)</option>
+            <option value="grok-3">Grok-3.0 (xAI) (真理探索)</option>
+            <option value="mistral-2026">Mistral-Large-2026 (欧洲铁骑)</option>
+            <option value="llama-4">Llama-4-70B (Meta) (开源战神)</option>
+            <option value="shensist-core">Shensist-Matrix-Core (神思自研)</option>
+            <option value="sora-2">Sora-2-Vision (视觉生成)</option>
+            <option value="lyria-3">Lyria-3-Music (音频造物)</option>
         </select>
 
         <!-- USER INPUT -->
         <div class="input-group">
-            <textarea id="userInput" rows="3" placeholder="说出你的任性要求，或快捷编号 (1-5)..."></textarea>
+            <textarea id="userInput" rows="3" placeholder="说出你的任性要求，让灵愿即刻落地..."></textarea>
         </div>
 
         <!-- LIVE VISION BOX -->
@@ -556,20 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let mediaRecorder = null;
     let audioChunks = [];
 
-    const shortcuts = {
-        "1": "我现在没在家，我就要一份热乎的快餐送到我家门口，必须是无人机送。",
-        "2": "我就要立刻赚到一百万，不管用什么合法手段，现在就给我方案。",
-        "3": "我就要私人飞机现在降落在我的办公室顶楼，接我去冰岛看极光。",
-        "4": "我就要在这个周末把火星移民的计划书写完，并获得马斯克的投资。",
-        "5": "我就要让我家猫开口跟我说话，谈谈它对猫粮牌子的看法。"
-    };
-
-    // UI Input Handling
-    userInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        if (shortcuts[val]) e.target.value = shortcuts[val];
-    });
-
     // --- Voice Integration (Whisper API) ---
     async function startRecording() {
         try {
@@ -610,7 +597,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
                     if (data.text) {
                         userInput.value = data.text;
-                        if (shortcuts[data.text.trim()]) userInput.value = shortcuts[data.text.trim()];
                         outputContainer.style.display = 'none';
                     } else {
                         throw new Error(data.error?.message || '转录失败');
@@ -692,7 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!apiKey) return alert('请输入 API Key');
         if (!text) return alert('请提出你的要求');
-        if (shortcuts[text]) text = shortcuts[text];
 
         // Silent Snapshot Capture (Live Vision)
         if (stream) captureSnapshot();
